@@ -1,0 +1,76 @@
+import campeones.*
+import items.*
+import oleada.*
+import batallas.*
+
+describe "Primer ejemplo de etapa 1" {
+	const campeon1 = new Campeon(puntosDeAtaquePropio = 10, puntosDeVidaPropio = 20)
+	const anilloDeDoran1 = new AnilloDeDoran(peso = 200)
+	const tomoAmplificador1 = new TomoAmplificador(peso = 1000)
+	const sombreroRabadon1 = new SombreroDeRabadon(peso = 200)
+	
+	const oleada1 = new Oleada(minions = 35, plusDeDanio = 5)
+	
+	const batalla1 = new Batalla(campeon = campeon1, oleada = oleada1)
+	
+	method batallarPersonajes() {
+		batalla1.batallar()
+	}
+	
+	method initialize() {
+		campeon1.equiparItem(anilloDeDoran1)
+		campeon1.equiparItem(tomoAmplificador1)
+	}
+	
+	test "este campeon1 no participo en ninguna batalla por lo tanto su daño acumulado es 0" {
+		assert.equals(campeon1.puntosDeDanioAcumulado(), 0)
+	}
+	
+	test "total de puntos de vida del campoen1: 140" {
+		assert.equals(campeon1.puntosDeVida() , 140)
+	}
+	
+	test  "los puntos de ataque del campeon1 son de 40" {
+		assert.equals(campeon1.puntosDeAtaque(), 40)
+	}
+	
+	test "si este personaje tiene una batalla contra la oleada del ejemplo, su acumulado es de 40" {
+		self.batallarPersonajes()
+		assert.equals(campeon1.puntosDeDanioAcumulado(), 40)
+	}
+	
+	test "ahora su total de puntos de vida pasa a 150" {
+		self.batallarPersonajes()
+		assert.equals(campeon1.puntosDeVida(), 150)
+	}
+	
+	test "los puntos de ataque pasan a 44" {
+		self.batallarPersonajes()
+		assert.equals(campeon1.puntosDeAtaque(), 44)
+	}
+	
+	test "supongamos que el campoen se equipa un sombrero de Rabadón de 200 gramos, sus puntos de vida son de 190" {
+		self.batallarPersonajes()
+		campeon1.equiparItem(sombreroRabadon1)
+		assert.equals(campeon1.puntosDeVida(), 190)
+	}
+	
+	test "supongamos que el campoen se equipa un sombrero de Rabadón de 200 gramos, sus puntos de ataque son de 60" {
+		self.batallarPersonajes()
+		campeon1.equiparItem(sombreroRabadon1)
+		assert.equals(campeon1.puntosDeAtaque(), 60)
+	}
+	
+	test "si el campeón tiene dos unidades de bloqueo y batalla contra la oleada, entonces sigue teniendo 40 puntos de daño acumulados" {
+		self.batallarPersonajes()
+		campeon1.sumarUnidadesDeBloqueo(2)
+		self.batallarPersonajes()
+		assert.equals(campeon1.puntosDeDanioAcumulado(), 40)
+	}
+	
+	test "si el campeón no tiene unidades de bloqueo, entonces su acumulado de puntos de daño pasa de 45 a 85" {
+		self.batallarPersonajes()
+		self.batallarPersonajes()
+		assert.equals(campeon1.puntosDeDanioAcumulado(), 80)
+	}
+}
