@@ -8,8 +8,7 @@ class Oleada {
 	
 	method danio() = minions + plusDeDanio
 	
-	method recibirDanioDe(unCampeon) {
-		minions = 0.max(minions - (unCampeon.puntosDeAtaque() / 2) )
+	method reducirPlusDeDanioPor(unCampeon) {
 		if(unCampeon.puntosDeAtaque().between(20, 40)) {
 			plusDeDanio = 0.max(plusDeDanio - 1)
 		}
@@ -17,10 +16,29 @@ class Oleada {
 			plusDeDanio = 0.max(plusDeDanio - 2)
 		}
 	}
+	
+	method recibirDanioDe(unCampeon) {
+		self.recibirDanio(unCampeon.puntosDeAtaque())
+		self.reducirPlusDeDanioPor(unCampeon)
+	}
+	
+	method recibirDanio(valorDeDanio) {
+		minions = 0.max(minions - (valorDeDanio / 2) )
+	}
 }
 
-class Ejercito inherits Oleada {
+class Ejercito {
 	const oleadas = #{}
 	
-	override method danio() = oleadas.
+	 method danio() = oleadas.sum({o => o.danio()})
+	
+	method batallarCon(unCampeon) {
+		if(oleadas.size() > 1) {
+			oleadas.first().recibirDanioDe(unCampeon)
+		}
+		else {
+			const efectoPorLaMitad = unCampeon.puntosDeAtaque().div(2)
+			oleadas.forEach({o => o.recibirDanioDeDe(efectoPorLaMitad)})
+		}
+	}
 }
